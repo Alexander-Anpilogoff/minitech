@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no">
+  <title>Земельные работы</title>
+
+  <!-- Swiper CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css"
+  />
+
+  <!-- Подключаем Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+    referrerpolicy="no-referrer"
+  />
+
+  <style>
+    li {
+color: orangered;
+    font-size: 1.4rem;
+    text-shadow: 0 0 1px;
+    }
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      background: #111; color: #fff; font-family: sans-serif;
+      overflow: hidden; /* отключаем стандартный скролл (используем Swiper) */
+    }
+    .contact-item {
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      gap: 0.5rem; /* Отступ между иконкой и текстом */
+      margin: 1rem 0; /* Отступ между элементами */
+      font-size: 1.5rem; /* общий размер */
+      transform: translateY(0%);
+    }
+    .contact-item i {
+      font-size: 1.4rem; /* размер иконки, при желании */
+      color: orangered;       /* если хотите другой цвет, укажите тут */
+    }
+    /* ==================== NAVBAR ==================== */
+    .navbar {
+      position: absolute;
+      top: 0; left: 0; width: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.8em 1em;
+      z-index: 10;
+      transition: background 0.3s ease;
+    }
+    .navbar.fixed {
+      position: fixed;
+      background: rgba(0,0,0,0.8);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+    .logo {
+      font-weight: bold; font-size: 1.2rem;
+    }
+    .nav-links {
+      display: flex; gap: 1em;
+    }
+    .nav-links a {
+      text-decoration: none; color: #fff;
+      font-weight: 500; padding: 0.3em 0.6em;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover {
+      color: #ccc;
+    }
+    .hamburger {
+      display: none; /* по умолчанию скрыта (для десктопа) */
+      cursor: pointer; font-size: 1.5rem;
+    }
+
+    /* ==================== МОБИЛЬНОЕ МЕНЮ ==================== */
+    .mobile-menu {
+      position: fixed; top: 0; left: 0; width: 100%;
+      transform: translateY(-100%);
+      transition: transform 1.1s;
+      z-index: 9;
+      background: linear-gradient(to bottom, black, #000000d4);
+    }
+    .mobile-menu.open {
+      transform: translateY(15%);
+      border-bottom-right-radius: 2%;
+      border-bottom-left-radius: 2%;
+    }
+    .mobile-menu ul {
+      list-style: none; 
+      padding: 1em; 
+      margin: 0;
+      display: flex; 
+      flex-direction: column; 
+      gap: 2.7em; 
+      text-align: center;
+    }
+    .mobile-menu a {
+      text-decoration: none; 
+      color: #fff; 
+      font-size: 1.1rem;
+    }
+
+    /* ==================== SWIPER (ГЛАВНЫЙ) ==================== */
+    .swiper {
+      width: 100%; 
+      height: 100%;
+    }
+    .swiper-slide {
+      position: relative;
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      overflow: hidden;
+    }
+    .parallax-bg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+    .slide-content {
+      position: relative; 
+      z-index: 1;
+      max-width: 80%;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    /* Гамбургер на узких экранах */
+    @media (max-width: 767px) {
+      .nav-links { display: none; }
+      .hamburger { display: block; margin-right: 10%; }
+    }
+
+    /* ==================== «УСЛУГИ» ==================== */
+    /* Выезжающее слово "Услуги" */
+    #services_slide {
+      position: absolute; 
+      top: 10%; 
+      width: 100vw; 
+      height: 13vh;
+      background: linear-gradient(26deg, #30303000, #3c3c3c0d);
+      text-align: right; 
+      font-size: 1.7rem; 
+      border-top: 1px solid;
+      transform: translateX(150%); /* скрываем за правым краем */
+      transition: 0.8s ease-in-out;
+      margin: 0 auto;
+    }
+
+    /* Аналогичный блок для "Контакты" */
+    #contacts_slide {
+      position: absolute;
+      top: 10%; 
+      width: 100vw; 
+      height: 13vh;
+      background: linear-gradient(26deg, #30303000, #3c3c3c0d);
+      text-align: right; 
+      font-size: 1.7rem;
+      border-top: 1px solid;
+      transform: translateX(150%);
+      transition: 0.8s ease-in-out;
+      margin: 0 auto;
+    }
+
+    /* ==================== Вложенный слайдер "Услуги" ==================== */
+    .services-swiper {
+      position: relative;
+      width: 94%;
+      height: 70vh;
+      margin: 2rem auto;
+      box-shadow: 0px 1px 4px 0px gray;
+      border-radius: 1%;
+    }
+    .services-swiper .swiper-slide {
+      position: relative;
+      background-position: center; 
+      background-size: cover; 
+      background-repeat: no-repeat;
+      display: flex; 
+      align-items: center; 
+      justify-content: flex-end;
+    }
+    .service-info-block {
+      background-color: rgba(0,0,0,0.6);
+      color: orangered;
+      box-sizing: border-box;
+      display: flex; 
+      flex-direction: column; 
+      justify-content: center;
+      width: 45%; 
+      height: 100%; 
+      padding: 1rem;
+    }
+
+    @media (max-width: 767px) {
+      .services-swiper .swiper-slide {
+        flex-direction: column; 
+        justify-content: flex-start; 
+        align-items: center;
+      }
+      .service-info-block {
+        width: 100%; 
+        height: 45%;
+        margin-left: 0; 
+        padding: 0.8rem;
+        position: relative; top: 55%;
+      }
+    }
+
+    /* Стрелки (десктоп) */
+    .desktop-arrows {
+      display: block; 
+      z-index: 5;
+    }
+    .swiper-button-next, .swiper-button-prev {
+      color: #fff;
+      width: 36px; height: 36px;
+      z-index: 10;
+    }
+    @media (max-width: 767px) {
+      .desktop-arrows { display: none; }
+    }
+
+    /* ==================== «ТЕХНИКА» ==================== */
+    /* Выезжающее слово "Техника" (тоже справа) */
+    #tech_slide {
+      position: absolute; 
+      top: 10%; 
+      width: 100vw; 
+      height: 13vh;
+      background: linear-gradient(26deg, #30303000, #3c3c3c0d);
+      text-align: right; 
+      font-size: 1.7rem; 
+      border-top: 1px solid;
+      transform: translateX(150%); /* скрываем за правым краем */
+      transition: 0.8s ease-in-out;
+      margin: 0 auto;
+    }
+
+    /* Вложенный слайдер «Техника» */
+    .tech-swiper {
+      position: relative;
+      width: 94%;
+      height: 70vh;
+      margin: 2rem auto;
+      box-shadow: 0px 1px 4px 0px gray;
+      border-radius: 1%;
+    }
+    .tech-swiper .swiper-slide {
+      position: relative;
+      background-position: center; 
+      background-size: cover; 
+      background-repeat: no-repeat;
+      display: flex; 
+      align-items: center; 
+      justify-content: flex-end;
+    }
+    .tech-info-block {
+      color: limegreen;
+      box-sizing: border-box;
+      display: flex; 
+      flex-direction: column; 
+      justify-content: center;
+      width: 100%; 
+      height: 100%; 
+      padding: 1rem;
+    }
+    @media (max-width: 767px) {
+      .tech-swiper .swiper-slide {
+        flex-direction: column; 
+        justify-content: flex-start; 
+        align-items: center;
+      }
+      .tech-info-block {
+        width: 100%; 
+        height: 45%;
+        margin-left: 0; 
+        padding: 0.8rem;
+        position: absolute; top: 47%;
+        font-size: 19px;
+        top: 52%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ========== NAVBAR ========== -->
+  <nav class="navbar" id="navbar">
+    <div class="logo">MиниТех</div>
+    <div class="nav-links" id="desktopMenu">
+      <a href="#" data-slide="0">Главная</a>
+      <a href="#" data-slide="1">Услуги</a>
+      <a href="#" data-slide="2">О компании</a>
+      <a href="#" data-slide="3">Техника</a>
+      <a href="#" data-slide="4">Портфолио</a>
+      <a href="#" data-slide="5">Контакты</a>
+    </div>
+    <div class="hamburger" id="hamburger">&#9776;</div>
+  </nav>
+
+  <!-- ========== МОБИЛЬНОЕ МЕНЮ ========== -->
+  <div class="mobile-menu" id="mobileMenu">
+    <ul>
+      <li><a href="#" data-slide="0">Главная</a></li>
+      <li><a href="#" data-slide="1">Услуги</a></li>
+      <li><a href="#" data-slide="2">О компании</a></li>
+      <li><a href="#" data-slide="3">Техника</a></li>
+      <li><a href="#" data-slide="4">Портфолио</a></li>
+      <li><a href="#" data-slide="5">Контакты</a></li>
+    </ul>
+  </div>
+
+  <!-- ========== ГЛАВНЫЙ SWIPER (ВЕРТИКАЛЬНЫЙ) ========== -->
+  <div class="swiper" id="mainSwiper">
+    <div class="swiper-wrapper">
+
+      <!-- (0) Главная -->
+      <div class="swiper-slide">
+        <div class="parallax-bg" style="background-image: url('images/b1.jpeg');" data-swiper-parallax="30%"></div>
+        <div class="slide-content">
+          <h2>Главная</h2>
+          <p>Земельные работы с использованием малой спецтехники</p>
+        </div>
+      </div>
+
+      <!-- (1) Услуги -->
+      <div class="swiper-slide">
+        <div class="parallax-bg" style="background-image: url('bg.jpeg');" data-swiper-parallax="40%"></div>
+
+        <!-- Заголовок "Услуги" (справа) -->
+        <div class="slide-content" id="services_slide">
+          <h2 style="font-weight: normal; color: white; text-shadow: 0 0 2px;">Услуги</h2>
+        </div>
+
+        <!-- Вложенный слайдер "Услуги" -->
+        <div class="services-swiper swiper" id="servicesSwiper" style="top: 10%">
+          <div class="swiper-wrapper">
+            <!-- Примеры слайдов... -->
+            <div class="swiper-slide" style="background-image: url('b2.jpeg')">
+              <div class="service-info-block">
+                <h3 style="font-size: 1.6rem; color: white;">Выкапывание траншей</h3>
+                <p style="color: white; text-shadow: 0 0 1px">Профессионально копаем траншеи под инженерные сети и коммуникации. При необходимости укрепляем стенки, устраиваем дренаж и вывозим грунт</p>
+              </div>
+            </div>
+
+            <div class="swiper-slide" style="background-image: url('b1.jpeg')">
+              <div class="service-info-block">
+                <h3 style="font-size: 1.6rem; color: white;">Выравнивание грунта</h3>
+                <p style="color: white; text-shadow: 0 0 1px">Подготавливаем участки к строительству и благоустройству: снимаем лишний слой, формируем ровную поверхность под нужные отметки, учитывая особенности рельефа и почвы</p>
+              </div>
+            </div>
+
+            <div class="swiper-slide" style="background-image: url('b1.jpeg')">
+              <div class="service-info-block">
+                <h3 style="font-size: 1.6rem; color: white;">Выравнивание грунта</h3>
+                <p style="color: white; text-shadow: 0 0 1px">Выкапываем котлованы для фундаментов и подземных сооружений. Соблюдаем проектные глубины и обеспечиваем безопасное укрепление стенок</p>
+              </div>
+            </div>
+
+            <div class="swiper-slide" style="background-image: url('b1.jpeg')">
+              <div class="service-info-block">
+                <h3 style="font-size: 1.6rem; color: white;">Выравнивание грунта</h3>
+                <p style="color: white; text-shadow: 0 0 1px">Выкапываем котлованы для фундаментов и подземных сооружений. Соблюдаем проектные глубины и обеспечиваем безопасное укрепление стенок</p>
+              </div>
+            </div>
+            <!-- ... Остальные слайды ... -->
+          </div>
+
+          <!-- Стрелки (только на десктопе) -->
+          <div class="swiper-button-next desktop-arrows"></div>
+          <div class="swiper-button-prev desktop-arrows"></div>
+        </div>
+      </div>
+
+      <!-- (2) О компании -->
+      <div class="swiper-slide">
+        <div class="parallax-bg" style="background-image: url('images/company-bg.jpg');" data-swiper-parallax="25%"></div>
+        <div class="slide-content">
+          <h2>О компании</h2>
+          <p>Опыт, лицензии, штат специалистов...</p>
+        </div>
+      </div>
+
+      <!-- (3) Техника -->
+      <div class="swiper-slide">
+        <div class="parallax-bg" style="background-image: url('bg.jpeg');" data-swiper-parallax="35%"></div>
+
+        <!-- Заголовок "Техника" (справа, аналогично "Услуги") -->
+        <div class="slide-content" id="tech_slide">
+          <h2 style="font-weight: normal; color: white; text-shadow: 0 0 2px;">
+            Техника
+          </h2>
+        </div>
+
+        <!-- Вложенный слайдер "Техника" (как в "Услуги") -->
+        <div class="tech-swiper swiper" id="techSwiper" style="top: 10%">
+          <div class="swiper-wrapper">
+            <!-- Пример слайдов для техники -->
+<div class="swiper-slide" style="background: rgb(0 0 0 / 75%)">
+  <img src="bobcat2.png" alt="Техника" style="width: 106%; float: left; transform: rotate(-3deg);">
+  <div class="tech-info-block" style="width: 100%; float: right;">
+    <h3 style="font-size: 1.6rem; color: white; text-shadow: 0 0 1px;">Bobcat E30</h3>
+    <ul style="list-style: disc; text-align: left; padding-left: 1.2rem; color: #fff;">
+      <li>Масса: 3.3 т</li>
+      <li>Глубина копания: 3.1 м</li>
+      <li>Ширина: 1.5 м</li>
+      <li>Производительность: до 20 м³/ч</li>
+    </ul>
+  </div>
+</div>
+
+<div class="swiper-slide" style="background: rgb(0 0 0 / 75%)">
+  <img src="bobcat2.png" alt="Техника" style="width: 106%; float: left; transform: rotate(-3deg);">
+  <div class="tech-info-block" style="width: 100%; float: right;">
+    <h3 style="font-size: 1.6rem; color: white; text-shadow: 0 0 1px;">Bobcat E30</h3>
+    <ul style="list-style: disc; text-align: left; padding-left: 1.2rem; color: #fff;">
+      <li>Масса: 3.3 т</li>
+      <li>Глубина копания: 3.1 м</li>
+      <li>Ширина: 1.5 м</li>
+      <li>Производительность: до 20 м³/ч</li>
+    </ul>
+  </div>
+</div>
+
+<div class="swiper-slide" style="background: rgb(0 0 0 / 75%)">
+  <img src="bobcat2.png" alt="Техника" style="width: 106%; float: left; transform: rotate(-3deg);">
+  <div class="tech-info-block" style="width: 100%; float: right;">
+    <h3 style="font-size: 1.6rem; color: white; text-shadow: 0 0 1px;">Bobcat E30</h3>
+    <ul style="list-style: disc; text-align: left; padding-left: 1.2rem; color: #fff;">
+      <li>Масса: 3.3 т</li>
+      <li>Глубина копания: 3.1 м</li>
+      <li>Ширина: 1.5 м</li>
+      <li>Производительность: до 20 м³/ч</li>
+    </ul>
+  </div>
+</div>
+
+<div class="swiper-slide" style="background: rgb(0 0 0 / 75%)">
+  <img src="bobcat2.png" alt="Техника" style="width: 106%; float: left; transform: rotate(-3deg);">
+  <div class="tech-info-block" style="width: 100%; float: right;">
+    <h3 style="font-size: 1.6rem; color: white; text-shadow: 0 0 1px;">Bobcat E30</h3>
+    <ul style="list-style: disc; text-align: left; padding-left: 1.2rem; color: #fff;">
+      <li>Масса: 3.3 т</li>
+      <li>Глубина копания: 3.1 м</li>
+      <li>Ширина: 1.5 м</li>
+      <li>Производительность: до 20 м³/ч</li>
+    </ul>
+  </div>
+</div>
+
+<div class="swiper-slide" style="background: rgb(0 0 0 / 75%)">
+  <img src="bobcat2.png" alt="Техника" style="width: 106%; float: left; transform: rotate(-3deg);">
+  <div class="tech-info-block" style="width: 100%; float: right;">
+    <h3 style="font-size: 1.6rem;">Bobcat E30</h3>
+    <ul style="list-style: disc; text-align: left; padding-left: 1.2rem; color: #fff;">
+      <li>Масса: 3.3 т</li>
+      <li>Глубина копания: 3.1 м</li>
+      <li>Ширина: 1.5 м</li>
+      <li>Производительность: до 20 м³/ч</li>
+    </ul>
+  </div>
+</div>
+
+            <!-- ... Добавьте ещё слайды ... -->
+          </div>
+
+          <!-- Стрелки (только десктоп) -->
+          <div class="swiper-button-next desktop-arrows"></div>
+          <div class="swiper-button-prev desktop-arrows"></div>
+        </div>
+      </div>
+
+      <!-- (4) Портфолио -->
+      <div class="swiper-slide">
+        <div class="parallax-bg" style="background-image: url('images/portfolio-bg.jpg');" data-swiper-parallax="20%"></div>
+        <div class="slide-content">
+          <h2>Портфолио</h2>
+          <p>Слайдер с фотографиями готовых объектов...</p>
+        </div>
+      </div>
+
+      <!-- (5) Контакты -->
+      <div class="swiper-slide">
+        <div class="parallax-bg" style="background-image: url('images/contacts-bg.jpg');" data-swiper-parallax="25%"></div>
+        
+        <!-- Выезжающий заголовок "Контакты" -->
+        <div class="slide-content" id="contacts_slide">
+          <h2 style="font-weight: normal; color: white; text-shadow: 0 0 2px;">
+            Контакты
+          </h2>
+        </div>
+
+        <!-- Здесь ваши контакты, карта и т.д. -->
+        <div class="slide-content" style="transform: translateY(20%); border-radius: 2%; width: 120%; left: -10%; position: relative;">
+          <!-- Пример блока контактных элементов -->
+          <div class="contact-item" style="position: relative; left: 9%;">
+            <i class="fa-solid fa-phone" ></i>
+            <a href="tel:+70000000000" style="color: #fff; text-decoration: none;">+7 000 000-00-00</a>
+          </div>
+          <div class="contact-item" style="position: relative; left: 11%; text-decoration: none">
+            <i class="fa-solid fa-envelope"></i>
+            <span style="color: #fff;">info@yoursite.com</span>
+          </div>
+          <div class="contact-item" style="position: relative; left: 14%;">
+            <i class="fa-solid fa-location-dot"></i>
+            <span>ул. Примерная, д. 1</span>
+          </div>
+          <!-- Карта -->
+        <div style="position:relative; overflow:hidden; width: 120%; transform: translateY(13%); margin: 2%"><a href="https://yandex.com/maps?utm_medium=mapframe&utm_source=maps" style="color:#eee;font-size:12px;position:absolute;top:0px;">Yandex Maps</a><a href="https://yandex.com/maps/geo/rabochiy_posyolok_kalininets/53063530/?from=mapframe&ll=36.976943%2C55.545729&source=mapframe&utm_medium=mapframe&utm_source=maps&z=13" style="color:#eee;font-size:12px;position:absolute;top:14px;">Yandex Maps: search for places, transport, and routes</a><iframe src="https://yandex.com/map-widget/v1/?from=mapframe&ll=36.976943%2C55.545729&mode=search&ol=geo&ouri=ymapsbm1%3A%2F%2Fgeo%3Fdata%3DCgg1MzA2MzUzMBKeAdCg0L7RgdGB0LjRjywg0JzQvtGB0LrQvtCy0YHQutCw0Y8g0L7QsdC70LDRgdGC0YwsINCd0LDRgNC-LdCk0L7QvNC40L3RgdC60LjQuSDQs9C-0YDQvtC00YHQutC-0Lkg0L7QutGA0YPQsywg0YDQsNCx0L7Rh9C40Lkg0L_QvtGB0ZHQu9C-0Log0JrQsNC70LjQvdC40L3QtdGGIgoNge0TQhUzPV5C&source=mapframe&utm_source=mapframe&z=13" width="560" height="400" frameborder="1" allowfullscreen="true" style="position:relative;"></iframe></div>
+        </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Swiper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+  <script>
+    // 1) Главный вертикальный слайдер
+    const mainSwiper = new Swiper('#mainSwiper', {
+      direction: 'vertical',
+      mousewheel: true,
+      slidesPerView: 1,
+      speed: 800,
+      parallax: true
+    });
+
+    // 2) Определяем, мобилка или нет
+    const isMobile = window.innerWidth < 768;
+
+    // 3) Вложенный слайдер «Услуги»
+    const servicesSwiper = new Swiper('#servicesSwiper', {
+      direction: isMobile ? 'vertical' : 'horizontal',
+      slidesPerView: 1,
+      speed: 700,
+      nested: true,
+      resistanceRatio: 0,
+      // Навигация (стрелки) — только десктоп
+      navigation: !isMobile ? {
+        nextEl: '.services-swiper .swiper-button-next',
+        prevEl: '.services-swiper .swiper-button-prev'
+      } : {}
+    });
+
+    // 3.1) Вложенный слайдер «Техника»
+    const techSwiper = new Swiper('#techSwiper', {
+      direction: isMobile ? 'vertical' : 'horizontal',
+      slidesPerView: 1,
+      speed: 700,
+      nested: true,
+      resistanceRatio: 0,
+      // Стрелки (только на десктопе)
+      navigation: !isMobile ? {
+        nextEl: '.tech-swiper .swiper-button-next',
+        prevEl: '.tech-swiper .swiper-button-prev'
+      } : {}
+    });
+
+    // 4) Блокируем прокрутку главного Swiper,
+    //    пока не достигнут первый/последний слайд вложенных слайдеров (Услуги + Техника).
+    function lockMainSwiper() {
+      if (mainSwiper.activeIndex === 1) {
+        // Секция «Услуги»
+        if (servicesSwiper.isBeginning || servicesSwiper.isEnd) {
+          mainSwiper.allowTouchMove = true;
+        } else {
+          mainSwiper.allowTouchMove = false;
+        }
+      } else if (mainSwiper.activeIndex === 3) {
+        // Секция «Техника»
+        if (techSwiper.isBeginning || techSwiper.isEnd) {
+          mainSwiper.allowTouchMove = true;
+        } else {
+          mainSwiper.allowTouchMove = false;
+        }
+      } else {
+        // В остальных секциях
+        mainSwiper.allowTouchMove = true;
+      }
+    }
+
+    // Следим за сменой слайдов во вложенных слайдерах
+    servicesSwiper.on('slideChange', lockMainSwiper);
+    techSwiper.on('slideChange', lockMainSwiper);
+
+    // Следим за сменой слайдов в главном слайдере
+    mainSwiper.on('slideChange', () => {
+      lockMainSwiper();
+
+      // Фиксируем navbar, если не на 0-м слайде
+      if (mainSwiper.activeIndex > 0) {
+        navbar.classList.add('fixed');
+      } else {
+        navbar.classList.remove('fixed');
+      }
+
+      // Слово «Услуги» (слайд #1)
+      if (mainSwiper.activeIndex === 1) {
+        services_slide.style.transform = "translateX(0%)";
+      } else {
+        services_slide.style.transform = "translateX(150%)";
+      }
+
+      // Слово «Техника» (слайд #3)
+      if (mainSwiper.activeIndex === 3) {
+        tech_slide.style.transform = "translateX(0%)";
+      } else {
+        tech_slide.style.transform = "translateX(150%)";
+      }
+
+      // Слово «Контакты» (слайд #5)
+      if (mainSwiper.activeIndex === 5) {
+        contacts_slide.style.transform = "translateX(-20%)";
+      } else {
+        contacts_slide.style.transform = "translateX(150%)";
+      }
+    });
+
+    // Первоначальная блокировка, если начнём на услугах/технике
+    lockMainSwiper();
+
+    // Гамбургер-меню
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    hamburger.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+    });
+
+    // Меню — клики на десктопе
+    const desktopMenuLinks = document.querySelectorAll('#desktopMenu a');
+    desktopMenuLinks.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const targetSlide = parseInt(link.getAttribute('data-slide'), 10);
+        mainSwiper.slideTo(targetSlide, 700);
+      });
+    });
+
+    // Меню — клики на мобилке
+    const mobileMenuLinks = document.querySelectorAll('#mobileMenu a');
+    mobileMenuLinks.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        mobileMenu.classList.remove('open');
+        const targetSlide = parseInt(link.getAttribute('data-slide'), 10);
+        mainSwiper.slideTo(targetSlide, 700);
+      });
+    });
+  </script>
+</body>
+</html>
+
